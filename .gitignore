@@ -19,3 +19,4 @@ coverage
 node_modules
 jspm_packages
 venv/
+db.sqlite3/
