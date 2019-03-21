@@ -1,0 +1,21 @@
+.idea
+pycache
+__pycache__/
+web/.idea
+web/__pycache__
+# Dependency directories
+node_modules
+
+coverage
+testCoverage
+
+# ReactScripts build dir
+build
+
+# Coverage directory used by tools
+coverage
+
+# Dependency directories
+node_modules
+jspm_packages
+venv/
