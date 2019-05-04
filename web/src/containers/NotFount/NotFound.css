@@ -1,0 +1,10 @@
+.not-found__block {
+    display: flex;
+    flex-direction: column;
+    margin: 4vh auto;
+    height: 45vh;
+}
+
+.not-found__block h3 {
+    margin-bottom: 3vh;
+}

@@ -1,57 +1,64 @@
-import React, {Component} from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
-import {connect} from 'react-redux';
-import './App.css';
-import {loadArticleList, increment} from '../actions/article';
-import LastNews from "../modules/LastNews/LastNews";
-import PopularNews from "../modules/PopularNews/PopularNews";
-import NotFound from './NotFound';
+import React, {PureComponent} from 'react';
+import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 
-class App extends Component {
-    constructor(props) {
-        super(props);
-        console.log('props.match: ', props.match.path);
-        console.log('props.url: ', props.url);
-        this.onClick = this.onClick.bind(this);
+import Admin from "./Admin/Admin";
+import HomePage from "../modules/HomePage";
+import Contacts from "../modules/Contacts";
+import AuthorList from "../modules/AuthorList";
+import Author from "../modules/Author";
+import Post from "../modules/Post";
+import AboutUs from '../modules/AboutUs';
+import CategoryList from '../modules/CategoryList';
+import Category from '../modules/Category';
+import Privacy from '../modules/Privacy';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import NotProvided from './NotProvided';
+import NotFound from './NotFount';
+
+import './App.css';
+
+class App extends PureComponent {
+
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname) {
+            App.onRouteChanged(this.props.location.action);
+        }
     }
 
-    onClick() {
-        const {loadArticleList} = this.props;
-        console.log("Sending a GET API Call !!!");
-        console.log('loadLocations: ', loadArticleList);
-        loadArticleList();
+    static onRouteChanged(action) {
+        if (action !== "POP") {window.scrollTo(0, 0);}
     }
 
     render() {
-        const {locations, pending, match} = this.props;
         return (
             <div className="App">
-
-                <div>
-                    Hello here!
-                </div>
-                <button type="button" onClick={this.onClick}>Send GET /products</button>
-                <div>{pending ? 'pending' : locations}</div>
-                <Switch>
-                    <Route exact path={`${match.path}`} component={LastNews}/>
-                    <Route path={`${match.path}/popular`} component={PopularNews}/>
-                    <Route path={`${match.path}/not-found`} component={NotFound}/>
-                    <Redirect from='*' to={`${match.path}/not-found`} />
-                </Switch>
+                <Header/>
+                <main>
+                    <Switch>
+                        <Route exact path='/' component={HomePage}/>
+                        <Redirect from='/app' to='/home'/>
+                        <Redirect from='/home' to='/'/>
+                        <Route exact path='/author' component={AuthorList}/>
+                        <Route path='/author/:id' component={Author}/>
+                        <Route exact path='/post/:id' component={Post}/>
+                        <Route exact path='/category' component={CategoryList}/>
+                        <Route path='/category/:link' component={Category}/>
+                        <Route exact path='/about-us' component={AboutUs}/>
+                        <Route exact path='/contacts' component={Contacts}/>
+                        <Route exact path='/privacy' component={Privacy}/>
+                        <Route exact path='/not-provided-yet' component={NotProvided}/>
+                        <Route exact path="/admin" component={Admin}/>
+                        <Route path='/not-found' component={NotFound}/>
+                        <Redirect from='*' to='/not-found'/>
+                    </Switch>
+                </main>
+                <Footer/>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => ({
-    article_list: state.article.article_list,
-    pending: state.article.pending,
-    error: state.article.error,
-});
 
-const mapDispatchToProps = {
-    loadArticleList,
-    increment
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(App);

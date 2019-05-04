@@ -1,0 +1,13 @@
+.footer-logo .logo img {
+    width: 210px;
+}
+
+.footer-logo {
+    margin-bottom: 16px
+}
+
+.contact-social li {
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}

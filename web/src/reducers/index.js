@@ -1,12 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'; // add compose
-import article from './article'; // import root reducer
+import post from './post'; // import root reducer
 import thunk from "redux-thunk";
 
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
-    article,
+    post,
 });
 
 //Create Middleware:
