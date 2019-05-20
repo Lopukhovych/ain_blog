@@ -82,6 +82,7 @@ class Article(models.Model):
 
 class Group(models.Model):
     title = models.CharField(max_length=256)
+    link = models.CharField(max_length=64, default='/')
     article_list = models.ManyToManyField(Article)
 
     def __str__(self):
