@@ -1,7 +1,7 @@
 import json
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
-from .models import User, Article
+from .models import User, Article, Group
 from django.core import serializers
 from django.views import View
 from datetime import date, timedelta
@@ -47,3 +47,18 @@ class PopularList(View):
         except Exception:
             return JsonResponse(json.dumps({'success': False}), safe=False)
         return JsonResponse(list(article_list.values()), safe=False)
+
+
+class GroupList(View):
+    def get(self, request):
+        try:
+            group_list = Group.objects.all()
+            data_list = [{
+                'id': group.id,
+                'title': group.title,
+                'link': group.link,
+                'post_amount': len(group.article_list.all())
+            } for group in group_list]
+        except Exception:
+            return JsonResponse(json.dumps({'success': False}), safe=False)
+        return JsonResponse(data_list, safe=False)
