@@ -50,11 +50,6 @@ class User(models.Model):
         return '%s %s' % (self.name, self.status)
 
 
-class Group(models.Model):
-    title = models.CharField(max_length=256)
-    article_list = models.CharField(max_length=512) # lasy loading
-
-
 class Article(models.Model):
     class ArticleStatus:
         in_review = "in_review"
@@ -70,16 +65,28 @@ class Article(models.Model):
         )
 
     title = models.CharField(max_length=256)
-    text = models.CharField(max_length=2048)
+    preview = models.CharField(max_length=256, blank=True)
+    text = models.CharField(max_length=4096, blank=True)
     author = models.ForeignKey(User, null=True, related_name='article', on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, null=True, related_name='article', on_delete=models.CASCADE)
     status = models.CharField(max_length=32, choices=ArticleStatus.choices)
-    view_number = models.IntegerField()
-    comment_list = models.CharField(max_length=512)
-    source_path = models.URLField(max_length=256)
-    public_date = models.DateTimeField(auto_now=False, auto_now_add=False)
+    view_number = models.IntegerField(default=0, blank=True)
+    comment_list = models.CharField(max_length=512, blank=True)
+    source_path = models.URLField(max_length=256, blank=True)
+    public_date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now_add=True)
+
+    def group_list(self):
+        return list(self.group_set.all().values_list('id', flat=True).order_by('id'))
+
+
+class Group(models.Model):
+    title = models.CharField(max_length=256)
+    article_list = models.ManyToManyField(Article)
+
+    def __str__(self):
+        return self.title + ', article_list: ' + str(
+            list(self.article_list.all().values_list('id', flat=True).order_by('id')))
 
 
 class Comment(models.Model):
