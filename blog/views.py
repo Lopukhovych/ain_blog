@@ -4,7 +4,10 @@ from django.core.paginator import Paginator
 from .models import User, Article, Group
 from django.core import serializers
 from django.views import View
-from datetime import date, timedelta
+from datetime import timedelta, datetime
+from django.db.models import Prefetch
+
+month_ago = datetime.now() - timedelta(weeks=4)
 
 
 class ArticleList(View):
@@ -40,10 +43,11 @@ class ArticleItem(View):
 class PopularList(View):
     def get(self, request):
         try:
-            week_ago = date.today() - timedelta(weeks=4)
+
             # TODO Change article list load number
-            article_list = Article.objects.filter(public_date__gte=week_ago).order_by('-view_number', '-public_date')[
-                           :2]
+            article_list = Article.objects \
+                               .filter(public_date__gte=month_ago) \
+                               .order_by('-view_number', '-public_date')[:2]
         except Exception:
             return JsonResponse(json.dumps({'success': False}), safe=False)
         return JsonResponse(list(article_list.values()), safe=False)
@@ -52,13 +56,39 @@ class PopularList(View):
 class GroupList(View):
     def get(self, request):
         try:
-            group_list = Group.objects.all()
+            group_list = Group.objects.all().prefetch_related(
+                Prefetch(
+                    'article_list',
+                    queryset=Article.objects.filter(public_date__gte=month_ago).order_by('-view_number', '-public_date')
+                )
+            )
             data_list = [{
                 'id': group.id,
                 'title': group.title,
                 'link': group.link,
-                'post_amount': len(group.article_list.all())
+                'post_amount': len(group.article_list.all()),
+                'post': self.get_post_dict(group.article_list.all().first())
             } for group in group_list]
-        except Exception:
-            return JsonResponse(json.dumps({'success': False}), safe=False)
+        except Exception as error:
+            return JsonResponse(json.dumps({'error': error}), safe=False)
         return JsonResponse(data_list, safe=False)
+
+    def get_post_dict(self, post):
+        if post:
+            category_list = list(post.group_set.all().values('id', 'link', 'title'))
+            return {
+                'id': post.id,
+                'title': post.title,
+                'category_list': category_list,
+                'public_date': post.public_date.now(),
+                'author': User.objects.filter(id=1).values('id', 'name')[0],
+                'imgLink': str(post.source_path),
+
+            }
+        else:
+            return {}
+
+
+class AdvertisementList(View):
+    def get(self):
+        pass

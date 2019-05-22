@@ -4,6 +4,10 @@ from django.db import models
 # Create your models here.
 
 
+def upload_image_location(instance, filename):
+    return 'images/%s_%s' % (instance.id, filename)
+
+
 class Permission(models.Model):
     class PermissionList:
         create = "create"
@@ -71,7 +75,7 @@ class Article(models.Model):
     status = models.CharField(max_length=32, choices=ArticleStatus.choices)
     view_number = models.IntegerField(default=0, blank=True)
     comment_list = models.CharField(max_length=512, blank=True)
-    source_path = models.URLField(max_length=256, blank=True)
+    source_path = models.ImageField(upload_to=upload_image_location, null=True, blank=True)
     public_date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now_add=True)
@@ -83,6 +87,7 @@ class Article(models.Model):
 class Group(models.Model):
     title = models.CharField(max_length=256)
     link = models.CharField(max_length=64, default='/')
+    preview = models.CharField(max_length=256, blank=True)
     article_list = models.ManyToManyField(Article)
 
     def __str__(self):
