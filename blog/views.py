@@ -6,6 +6,7 @@ from django.core import serializers
 from django.views import View
 from datetime import timedelta, datetime
 from django.db.models import Prefetch
+from django.forms.models import model_to_dict
 
 month_ago = datetime.now() - timedelta(weeks=4)
 
@@ -13,21 +14,29 @@ month_ago = datetime.now() - timedelta(weeks=4)
 class ArticleList(View):
     def get(self, request):
         try:
-            article_list = Article.objects.all().order_by('-public_date')
+            article_list = Article.objects.filter(status='published').order_by('-public_date')
             # TODO Change article list load number
             paginator = Paginator(article_list, 2)
             page = int(request.GET.get('page', 1))
             object_list = paginator.get_page(page).object_list
-            list_result = list(object_list.values())
+            list_result = list(object_list.values(
+                'id', 'title', 'preview', 'author_id', 'view_number', 'comment_list',
+                'source_path', 'public_date')
+            )
         except Exception:
             return JsonResponse(json.dumps({'error': True}), safe=False)
         return JsonResponse({'article_list': list_result, 'page_number': paginator.num_pages}, safe=False)
 
 
 class ArticleItem(View):
-    def get(self, request):
-        data = json.dumps({'hello': 'world'})
-        return JsonResponse(data, safe=False)
+    def get(self, request, article_id):
+        try:
+            article_item = Article.objects.get(id=article_id)
+            data_list = model_to_dict(article_item, exclude=['preview', 'status'])
+            data_list['source_path'] = str(data_list['source_path'])
+        except Exception as error:
+            return JsonResponse(json.dumps({'error': list(error)}), safe=False)
+        return JsonResponse(data_list, safe=False)
 
     def post(self, request):
         try:
@@ -90,5 +99,30 @@ class GroupList(View):
 
 
 class AdvertisementList(View):
-    def get(self):
-        pass
+    def get(self, request):
+        data_list = [
+            dict(type='social_media', params=self.get_social_media()),
+            dict(type='instagram', params=self.get_instagram_media()),
+        ]
+        return JsonResponse(data_list, safe=False)
+
+    def get_social_media(self):
+        return dict(
+            title='Sent your email to receive the latest news',
+            socialInfo='Subscribe our channels in social networks to be a part of community',
+            socialNetworkList=[
+                {'title': 'facebook', 'link': '/not-provided-yet', 'followers': 22},
+                {'title': 'twitter', 'link': '/not-provided-yet', 'followers': 23},
+                {'title': 'google-plus', 'link': '/not-provided-yet', 'followers': 44000},
+                {'title': 'instagram', 'link': '/not-provided-yet', 'followers': 22060},
+            ])
+
+    def get_instagram_media(self):
+        return [
+            '/images/galery-1.jpg',
+            '/images/galery-2.jpg',
+            '/images/galery-3.jpg',
+            '/images/galery-4.jpg',
+            '/images/galery-5.jpg',
+            '/images/galery-6.jpg',
+        ]
