@@ -11,7 +11,7 @@ import InstagramAd from '../../components/asideAdds/InstagramAd';
 import CommentList from '../../components/CommentList';
 import LeaveACommentForm from '../../components/LeaveACommentForm';
 
-import './Article.css';
+import './Post.css';
 import header1 from '../../assets/mock/header-1.jpg';
 import media1 from '../../assets/mock/media-1.jpg';
 import media2 from '../../assets/mock/media-2.jpg';

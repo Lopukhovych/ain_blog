@@ -1,14 +1,21 @@
 import json
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
-from .models import User, Article, Group
-from django.core import serializers
+from .models import User, Article, Group, Comment
 from django.views import View
 from datetime import timedelta, datetime
 from django.db.models import Prefetch
 from django.forms.models import model_to_dict
+from django.db.models.fields.files import FieldFile
 
 month_ago = datetime.now() - timedelta(weeks=4)
+
+
+def return_url_from_file_field(model_dict):
+    for item in model_dict:
+        if isinstance(model_dict[item], FieldFile):
+            model_dict[item] = model_dict[item].url
+    return model_dict
 
 
 class ArticleList(View):
@@ -32,8 +39,24 @@ class ArticleItem(View):
     def get(self, request, article_id):
         try:
             article_item = Article.objects.get(id=article_id)
-            data_list = model_to_dict(article_item, exclude=['preview', 'status'])
-            data_list['source_path'] = str(data_list['source_path'])
+
+            data_list = model_to_dict(article_item, exclude=['preview', 'status', 'created_date', 'updated_date'])
+            data_list['source_path'] = data_list['source_path'].url
+
+            data_list['author'] = return_url_from_file_field(model_to_dict(article_item.author, exclude=['role', 'status']))
+
+            data_list['category_list'] = article_item.group_list()
+
+            comment_list_query_set = Comment.objects.filter(article=article_item.id)
+            comment_list = [{
+                'id': comment.id,
+                'article_id': comment.article_id,
+                'text': comment.text,
+                'time': comment.time,
+                'author': return_url_from_file_field(model_to_dict(comment.author, exclude=['role', 'status'])),
+            } for comment in comment_list_query_set]
+            data_list['comment_list'] = comment_list
+
         except Exception as error:
             return JsonResponse(json.dumps({'error': list(error)}), safe=False)
         return JsonResponse(data_list, safe=False)
@@ -91,7 +114,7 @@ class GroupList(View):
                 'category_list': category_list,
                 'public_date': post.public_date.now(),
                 'author': User.objects.filter(id=1).values('id', 'name')[0],
-                'imgLink': str(post.source_path),
+                'imgLink': post.source_path.url,
 
             }
         else:
@@ -119,10 +142,10 @@ class AdvertisementList(View):
 
     def get_instagram_media(self):
         return [
-            '/images/galery-1.jpg',
-            '/images/galery-2.jpg',
-            '/images/galery-3.jpg',
-            '/images/galery-4.jpg',
-            '/images/galery-5.jpg',
-            '/images/galery-6.jpg',
+            '/media/article_images/galery-1.jpg',
+            '/media/article_images/galery-2.jpg',
+            '/media/article_images/galery-3.jpg',
+            '/media/article_images/galery-4.jpg',
+            '/media/article_images/galery-5.jpg',
+            '/media/article_images/galery-6.jpg',
         ]
