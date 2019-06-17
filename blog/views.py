@@ -22,8 +22,7 @@ class ArticleList(View):
     def get(self, request):
         try:
             article_list = Article.objects.filter(status='published').order_by('-public_date')
-            # TODO Change article list load number
-            paginator = Paginator(article_list, 2)
+            paginator = Paginator(article_list, 14)
             page = int(request.GET.get('page', 1))
             object_list = paginator.get_page(page).object_list
             list_result = list(object_list.values(
