@@ -11,7 +11,7 @@ import InstagramAd from '../../components/asideAdds/InstagramAd';
 import CommentList from '../../components/CommentList';
 import LeaveACommentForm from '../../components/LeaveACommentForm';
 
-import './Article.css';
+import './Post.css';
 import header1 from '../../assets/mock/header-1.jpg';
 import media1 from '../../assets/mock/media-1.jpg';
 import media2 from '../../assets/mock/media-2.jpg';
@@ -185,26 +185,6 @@ class Post extends Component {
                                     </div>
                                 </div>
 
-                                {/*<div className="section-row">*/}
-                                {/*<div className="post-nav">*/}
-                                {/*<div className="prev-post">*/}
-                                {/*<a className="post-img" href="blog-post.html"><img src={widget8}*/}
-                                {/*alt=""/></a>*/}
-                                {/*<h3 className="post-title"><a href="#">Sed ut perspiciatis, unde omnis iste*/}
-                                {/*natus error sit</a></h3>*/}
-                                {/*<span>Previous post</span>*/}
-                                {/*</div>*/}
-
-                                {/*<div className="next-post">*/}
-                                {/*<a className="post-img" href="blog-post.html"><img src={widget10}*/}
-                                {/*alt=""/></a>*/}
-                                {/*<h3 className="post-title"><a href="#">Postea senserit id eos, vivendo*/}
-                                {/*periculis ei qui</a></h3>*/}
-                                {/*<span>Next post</span>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-
                                 <div className="section-row">
                                     <div className="section-title">
                                         <h3 className="title">
@@ -224,31 +204,6 @@ class Post extends Component {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/*<div>*/}
-                                {/*<div className="section-title">*/}
-                                {/*<h3 className="title">Related Posts</h3>*/}
-                                {/*</div>*/}
-                                {/*<div className="row">*/}
-                                {/*<div className="col-md-4">*/}
-                                {/*<div className="post post-sm">*/}
-                                {/*<a className="post-img" href="blog-post.html"><img*/}
-                                {/*src={post4} alt=""/></a>*/}
-                                {/*<div className="post-body">*/}
-                                {/*<div className="post-category">*/}
-                                {/*<a href="category.html">Health</a>*/}
-                                {/*</div>*/}
-                                {/*<h3 className="post-title title-sm"><a href="blog-post.html">Postea*/}
-                                {/*senserit id eos, vivendo periculis ei qui</a></h3>*/}
-                                {/*<ul className="post-meta">*/}
-                                {/*<li><a href="author.html">John Doe</a></li>*/}
-                                {/*<li>20 April 2018</li>*/}
-                                {/*</ul>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
-                                {/*</div>*/}
                                 <CommentList commentList={postInfo.commentList}/>
                                 <LeaveACommentForm/>
 
