@@ -85,14 +85,8 @@ class Article(models.Model):
     created_date = models.DateTimeField(auto_now_add=False, blank=True, default=timezone.now)
     updated_date = models.DateTimeField(auto_now_add=False, blank=True, default=timezone.now)
 
-    # updated_date = models.DateTimeField(auto_now_add=True)
-    # auto_now_add=True makes that field not editable. So model_to_dict couldn't read this field
-
     def group_list(self):
         return list(self.group_set.all().order_by('id').values('id', 'title', 'link'))
-
-    # def comment_list(self):
-    #     return list(self.comment_set.all().order_by('id').values('id', 'author', 'text', 'time'))
 
 
 class Group(models.Model):
