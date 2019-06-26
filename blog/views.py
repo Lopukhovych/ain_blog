@@ -6,16 +6,9 @@ from django.views import View
 from datetime import timedelta, datetime
 from django.db.models import Prefetch
 from django.forms.models import model_to_dict
-from django.db.models.fields.files import FieldFile
+from .utils import return_url_from_file_field
 
 month_ago = datetime.now() - timedelta(weeks=4)
-
-
-def return_url_from_file_field(model_dict):
-    for item in model_dict:
-        if isinstance(model_dict[item], FieldFile):
-            model_dict[item] = model_dict[item].url
-    return model_dict
 
 
 class ArticleList(View):

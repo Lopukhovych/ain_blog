@@ -1,9 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.db.models import F
-
-
-# Create your models here.
 
 
 def upload_article_image_location(instance, filename):

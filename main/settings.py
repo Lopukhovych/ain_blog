@@ -30,6 +30,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'dev.custom_blog.com']
 CORS_ORIGIN_WHITELIST = ('localhost:8000', 'localhost:3000', '127.0.0.1:3000', 'dev.custom_blog.com')
 
 ROOT_URLCONF = 'main.urls'
+
+ASGI_APPLICATION = "chat.routing.application"
 # CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
@@ -62,6 +64,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'blog',
+    'chat',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -91,10 +95,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'main.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+# WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -105,6 +106,16 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+            # "hosts": [os.environ.get('REDIS_URL', "redis://localhost:6379")],
+        },
+    },
 }
 
 # Password validation
