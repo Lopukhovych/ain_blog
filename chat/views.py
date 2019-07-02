@@ -11,7 +11,7 @@ class CommentConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.article_id = self.scope.get('url_route').get('kwargs').get('article_id')
-        self.article_room = 'article_%s' % (self.article_id)
+        self.article_room = 'article-%s' % (self.article_id)
 
         # Join room group
         await self.channel_layer.group_add(
@@ -24,7 +24,7 @@ class CommentConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         # Leave room group
         await self.channel_layer.group_discard(
-            self.article_id,
+            self.article_room,
             self.channel_name
         )
 
